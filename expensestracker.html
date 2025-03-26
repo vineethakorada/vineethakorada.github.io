@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 5px 0; padding: 10px; border-radius: 5px; display: flex; justify-content: space-between; }
+        .income { background-color: #c8e6c9; }
+        .expense { background-color: #ffcdd2; }
+        button { margin-left: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Expense Tracker</h2>
+        <h3>Balance: <span id="balance">$0.00</span></h3>
+        <input type="text" id="desc" placeholder="Description">
+        <input type="number" id="amount" placeholder="Amount">
+        <button onclick="addTransaction()">Add</button>
+        <ul id="transactions"></ul>
+    </div>
+
+    <script>
+        let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        
+        function updateUI() {
+            const balance = transactions.reduce((sum, t) => sum + t.amount, 0);
+            document.getElementById("balance").innerText = `$${balance.toFixed(2)}`;
+            document.getElementById("transactions").innerHTML = transactions.map((t, index) => `
+                <li class="${t.amount >= 0 ? 'income' : 'expense'}">
+                    ${t.desc} <span>$${t.amount.toFixed(2)}</span>
+                    <button onclick="removeTransaction(${index})">X</button>
+                </li>
+            `).join("");
+            localStorage.setItem("transactions", JSON.stringify(transactions));
+        }
+
+        function addTransaction() {
+            const desc = document.getElementById("desc").value.trim();
+            const amount = parseFloat(document.getElementById("amount").value);
+            if (!desc || isNaN(amount)) return alert("Enter valid details!");
+            transactions.push({ desc, amount });
+            document.getElementById("desc").value = "";
+            document.getElementById("amount").value = "";
+            updateUI();
+        }
+
+        function removeTransaction(index) {
+            transactions.splice(index, 1);
+            updateUI();
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
