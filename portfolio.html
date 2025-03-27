@@ -147,12 +147,59 @@
         }
 
         /* Enhanced Home Section with Particle Background */
-        .home-section {
+       .home-section {
             background: transparent;
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
         }
 
+        .home-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .home-image {
+            width: 250px;
+            height: 430px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: var(--glow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .home-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(207, 181, 59, 0.8);
+        }
+
+        .home-content {
+            flex: 1;
+            min-width: 300px;
+            text-align: left;
+        }
+
+        .home-content p {
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .home-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .home-content {
+                text-align: center;
+            }
+            .home-image {
+                width: 200px;
+                height: 200px;
+            }
+        }
         section h2 {
             font-size: 2em;
             color: var(--accent);
@@ -532,11 +579,19 @@
 
     <div class="loader" id="loader"></div>
 
-    <section id="home" class="home-section active">
-        <h2>Hi, I'm Vineethakorada</h2>
-        <p>I am a dedicated B.Tech student at SASI Institute of Technology & Engineering, specializing in frontend development with expertise in HTML, CSS, and JavaScript.</p>
-        <p>Currently pursuing my degree in Computer Science and Engineering, I’m passionate about creating responsive web applications and enhancing user experiences through clean code and modern design principles.</p>
-        <p>Based in Vizianagaram, Andhra Pradesh, I’m actively working on real-world projects to refine my skills and contribute to innovative web solutions.</p>
+   <section id="home" class="home-section active">
+        <h2>Home</h2>
+        <div class="home-container">
+            <div class="home-images">
+                <img src="./philipine-beautiful-girl-customer-service-support-call-contact-center_1078076-20.avif" alt="Profile" class="home-image">
+            </div>
+            <div class="home-content">
+                <p>Hi, I'm Vineetha!</p>
+                <p>Frontend Developer | UI/UX Enthusiast</p>
+                <p>I build modern, responsive web applications with HTML, CSS, and JavaScript, focusing on seamless user experiences.</p>
+                <p>Explore my work below!</p>
+            </div>
+        </div>
     </section>
 
     <section id="skills" class="skills-section">
