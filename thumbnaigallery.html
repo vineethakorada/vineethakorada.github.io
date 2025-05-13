@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celestial Peacock Gallery</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6e45e2;
+      --secondary: #88d3ce;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --accent: #ff7e5f;
+      --moonlight: #c0c0ff;
+      --peacock: #0d98ba;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      --transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #f8f9fa;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      padding: 20px 0;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      background: linear-gradient(to right, var(--moonlight), var(--peacock));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+      letter-spacing: 1px;
+      position: relative;
+      display: inline-block;
+      text-shadow: 0 2px 10px rgba(110, 69, 226, 0.3);
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(to right, var(--moonlight), var(--peacock));
+      bottom: -15px;
+      left: 20%;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(110, 69, 226, 0.3);
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.8;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      position: fixed;
+      left: 30px;
+      bottom: 30px;
+      background: linear-gradient(135deg, var(--moonlight), var(--peacock));
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      opacity: 0;
+      visibility: hidden;
+      z-index: 100;
+      font-weight: 500;
+    }
+
+    .back-btn.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(110, 69, 226, 0.4);
+    }
+
+    .filter-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+
+    .filter-btn {
+      padding: 10px 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 600;
+      color: white;
+      backdrop-filter: blur(5px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .filter-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .filter-btn:hover::before {
+      left: 100%;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: linear-gradient(135deg, var(--moonlight), var(--peacock));
+      border-color: transparent;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(110, 69, 226, 0.3);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      aspect-ratio: 1/1;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .gallery-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--moonlight), var(--peacock));
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 1;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .gallery-item:hover::before {
+      opacity: 0.3;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: var(--transition);
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.1) rotate(1deg);
+    }
+
+    .gallery-item .overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(26, 26, 46, 0.9), transparent);
+      color: white;
+      padding: 25px;
+      transform: translateY(100%);
+      transition: var(--transition);
+      z-index: 2;
+    }
+
+    .gallery-item:hover .overlay {
+      transform: translateY(0);
+    }
+
+    .gallery-item .title {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .gallery-item .category {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      display: inline-block;
+      padding: 5px 15px;
+      background: linear-gradient(135deg, var(--moonlight), var(--peacock));
+      border-radius: 50px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .lightbox.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+      text-align: center;
+    }
+
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 10px;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+      animation: fadeInScale 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -60px;
+      right: 0;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(255, 255, 255, 0.2);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-close:hover {
+      background: var(--accent);
+      transform: rotate(90deg);
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      transform: translateY(-50%);
+    }
+
+    .lightbox-nav button {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1.5rem;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-nav button:hover {
+      background: linear-gradient(135deg, var(--moonlight), var(--peacock));
+      transform: scale(1.1);
+    }
+
+    .image-info {
+      margin-top: 20px;
+      color: white;
+      text-align: center;
+    }
+
+    .image-info h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, var(--moonlight), var(--peacock));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .image-info .category {
+      display: inline-block;
+      padding: 5px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .gallery-item {
+      animation: fadeIn 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px) rotateX(20deg); }
+      to { opacity: 1; transform: translateY(0) rotateX(0); }
+    }
+
+    /* Floating stars background */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle var(--duration, 5s) infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
+      .filter-buttons {
+        gap: 10px;
+      }
+
+      .filter-btn {
+        padding: 8px 18px;
+        font-size: 0.9rem;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+      }
+
+      .lightbox-nav button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-buttons {
+        gap: 8px;
+      }
+
+      .filter-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+
+      .lightbox-content {
+        max-width: 95%;
+      }
+
+      .lightbox-close {
+        top: -50px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating stars background -->
+  <div class="stars" id="stars"></div>
+
+  <div class="container">
+    <header>
+      <h1>Celestial Peacock Gallery</h1>
+      <p class="subtitle">A mesmerizing collection of moonlit landscapes and vibrant peacock imagery</p>
+      <button class="back-btn">
+        <i class="fas fa-arrow-up"></i> Back to Top
+      </button>
+    </header>
+
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="moon">Moon</button>
+      <button class="filter-btn" data-filter="peacock">Peacock</button>
+      <button class="filter-btn" data-filter="nature">Nature</button>
+      <button class="filter-btn" data-filter="wildlife">Wildlife</button>
+    </div>
+
+    <div class="gallery">
+      <!-- Moon Images -->
+      <div class="gallery-item" data-category="moon">
+        <img src="https://images.unsplash.com/photo-1532974297617-c0f05fe48bff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Full Moon">
+        <div class="overlay">
+          <h3 class="title">Lunar Majesty</h3>
+          <span class="category">Moon</span>
+        </div>
+      </div>
+      <div class="gallery-item" data-category="moon">
+        <img src="https://images.unsplash.com/photo-1506443432602-ac2fcd6f54e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Moon over Mountains">
+        <div class="overlay">
+          <h3 class="title">Mountain Moonrise</h3>
+          <span class="category">Moon</span>
+        </div>
+      </div>
+      <div class="gallery-item" data-category="moon">
+        <img src="https://images.unsplash.com/photo-1527481138388-31827a7c94d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Blood Moon">
+        <div class="overlay">
+          <h3 class="title">Blood Moon Eclipse</h3>
+          <span class="category">Moon</span>
+        </div>
+      </div>
+
+      <!-- Peacock Images -->
+      <div class="gallery-item" data-category="peacock">
+        <img src="https://images.unsplash.com/photo-1597848212624-a19eb35e2651?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Peacock Feathers">
+        <div class="overlay">
+          <h3 class="title">Peacock Splendor</h3>
+          <span class="category">Peacock</span>
+        </div>
+      </div>
+      <div class="gallery-item" data-category="peacock">
+        <img src="https://images.unsplash.com/photo-1551085254-e96b210db58a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Peacock Display">
+        <div class="overlay">
+          <h3 class="title">Regal Display</h3>
+          <span class="category">Peacock</span>
+        </div>
+      </div>
+      <div class="gallery-item" data-category="peacock">
+        <img src="https://images.unsplash.com/photo-1571566882372-1598d88abd30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Peacock Closeup">
+        <div class="overlay">
+          <h3 class="title">Feather Details</h3>
+          <span class="category">Peacock</span>
+        </div>
+      </div>
+
+      <!-- Nature Images -->
+      <div class="gallery-item" data-category="nature">
+        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Forest">
+        <div class="overlay">
+          <h3 class="title">Enchanted Forest</h3>
+          <span class="category">Nature</span>
+        </div>
+      </div>
+      <div class="gallery-item" data-category="nature">
+        <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Waterfall">
+        <div class="overlay">
+          <h3 class="title">Majestic Waterfall</h3>
+          <span class="category">Nature</span>
+        </div>
+      </div>
+
+      <!-- Wildlife Images -->
+      <div class="gallery-item" data-category="wildlife">
+        <img src="https://images.unsplash.com/photo-1474511320723-9a56873867b5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Fox">
+        <div class="overlay">
+          <h3 class="title">Wild Fox</h3>
+          <span class="category">Wildlife</span>
+        </div>
+      </div>
+      <div class="gallery-item" data-category="wildlife">
+        <img src="https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Owl">
+        <div class="overlay">
+          <h3 class="title">Wise Owl</h3>
+          <span class="category">Wildlife</span>
+        </div>
+      </div>
+      <div class="gallery-item" data-category="wildlife">
+        <img src="https://images.unsplash.com/photo-1555169062-013468b47731?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80" alt="Tiger">
+        <div class="overlay">
+          <h3 class="title">Royal Bengal Tiger</h3>
+          <span class="category">Wildlife</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox">
+    <div class="lightbox-content">
+      <span class="lightbox-close">&times;</span>
+      <img src="" alt="">
+      <div class="lightbox-nav">
+        <button class="prev-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="next-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="image-info">
+        <h3 class="lightbox-title"></h3>
+        <span class="lightbox-category"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create floating stars
+      const starsContainer = document.getElementById('stars');
+      const starCount = 100;
+      
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        
+        // Random properties
+        const size = Math.random() * 3;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        const duration = 2 + Math.random() * 8;
+        const delay = Math.random() * 5;
+        
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${posX}%`;
+        star.style.top = `${posY}%`;
+        star.style.setProperty('--duration', `${duration}s`);
+        star.style.animationDelay = `${delay}s`;
+        
+        starsContainer.appendChild(star);
+      }
+
+      // DOM Elements
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      const backBtn = document.querySelector('.back-btn');
+      const lightbox = document.querySelector('.lightbox');
+      const lightboxImg = document.querySelector('.lightbox img');
+      const lightboxClose = document.querySelector('.lightbox-close');
+      const prevBtn = document.querySelector('.prev-btn');
+      const nextBtn = document.querySelector('.next-btn');
+      const lightboxTitle = document.querySelector('.lightbox-title');
+      const lightboxCategory = document.querySelector('.lightbox-category');
+      
+      let currentImageIndex = 0;
+      const images = Array.from(galleryItems).map(item => ({
+        src: item.querySelector('img').src,
+        title: item.querySelector('.title').textContent,
+        category: item.querySelector('.category').textContent
+      }));
+
+      // Stagger animations for gallery items
+      galleryItems.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
+      });
+
+      // Filter Gallery Items
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Update active button
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          const filter = button.dataset.filter;
+
+          // Filter items with animation
+          galleryItems.forEach((item, index) => {
+            if (filter === 'all' || item.dataset.category === filter) {
+              item.style.display = 'block';
+              item.style.animation = 'fadeIn 0.5s ease forwards';
+              item.style.animationDelay = `${index * 0.05}s`;
+            } else {
+              item.style.animation = 'fadeIn 0.3s ease reverse forwards';
+              setTimeout(() => {
+                item.style.display = 'none';
+              }, 300);
+            }
+          });
+        });
+      });
+
+      // Lightbox Functionality
+      galleryItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+          currentImageIndex = index;
+          updateLightbox();
+          lightbox.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      function updateLightbox() {
+        lightboxImg.src = images[currentImageIndex].src;
+        lightboxTitle.textContent = images[currentImageIndex].title;
+        lightboxCategory.textContent = images[currentImageIndex].category;
+      }
+
+      // Close Lightbox
+      lightboxClose.addEventListener('click', () => {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+
+      // Navigation in Lightbox
+      prevBtn.addEventListener('click', () => {
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        updateLightbox();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        updateLightbox();
+      });
+
+      // Keyboard Navigation
+      document.addEventListener('keydown', (e) => {
+        if (lightbox.classList.contains('active')) {
+          if (e.key === 'Escape') {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+          } else if (e.key === 'ArrowLeft') {
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            updateLightbox();
+          } else if (e.key === 'ArrowRight') {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            updateLightbox();
+          }
+        }
+      });
+
+      // Back Button Visibility
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 200) {
+          backBtn.classList.add('visible');
+        } else {
+          backBtn.classList.remove('visible');
+        }
+      });
+
+      // Back to Top Functionality
+      backBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
