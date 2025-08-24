@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSV SQL Engine</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #a18cd1, #fbc2eb);
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+    max-width: 1100px;
+    width: 95%;
+    background: var(--container-bg);
+    padding: 25px 35px;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease, background 0.4s ease;
+  }
+  .container:hover {
+    transform: scale(1.01);
+  }
+    h1 {
+      margin-bottom: 10px;
+      color: #444;
+    }
+    textarea {
+      width: 90%;
+      height: 120px;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      background: #f5f5f5;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background: #4CAF50;
+      color: white;
+    }
+    #output {
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 CSV SQL Engine</h1>
+    <input type="file" id="fileInput" multiple accept=".csv"><br><br>
+    <textarea id="queryBox" placeholder="Type Query"></textarea><br>
+    <button onclick="runQuery()">▶ Run Query</button>
+    <button onclick="copyOutput()">📋 Copy</button>
+    <button onclick="exportCSV()">⬇ Export</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    let db;
+    let tables = {};
+
+    async function initDb() {
+      const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.wasm` });
+      db = new SQL.Database();
+    }
+
+    initDb();
+
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const files = e.target.files;
+      for (let file of files) {
+        Papa.parse(file, {
+          header: true,
+          complete: function(results) {
+            const tableName = file.name.split(".")[0];
+            tables[tableName] = results.data.filter(row => Object.values(row).some(v => v !== ""));
+            createTable(tableName, tables[tableName]);
+          }
+        });
+      }
+    });
+
+    function createTable(tableName, data) {
+      if (!data.length) return;
+      const columns = Object.keys(data[0]).map(c => `"${c}" TEXT`).join(",");
+      db.run(`DROP TABLE IF EXISTS "${tableName}"`);
+      db.run(`CREATE TABLE "${tableName}" (${columns})`);
+      const insert = db.prepare(`INSERT INTO "${tableName}" VALUES (${Object.keys(data[0]).map(() => '?').join(",")})`);
+      data.forEach(row => insert.run(Object.values(row)));
+      insert.free();
+      alert(`✅ Table '${tableName}' created with ${data.length} rows`);
+    }
+
+    function runQuery() {
+      const query = document.getElementById("queryBox").value;
+      try {
+        const res = db.exec(query);
+        if (res.length === 0) {
+          document.getElementById("output").innerHTML = "<p>No rows found.</p>";
+          return;
+        }
+        let html = "<table><tr>";
+        res[0].columns.forEach(col => html += `<th>${col}</th>`);
+        html += "</tr>";
+        res[0].values.forEach(row => {
+          html += "<tr>";
+          row.forEach(val => html += `<td>${val}</td>`);
+          html += "</tr>";
+        });
+        html += "</table>";
+        document.getElementById("output").innerHTML = html;
+      } catch (err) {
+        document.getElementById("output").innerHTML = `<p style='color:red;'>❌ ${err.message}</p>`;
+      }
+    }
+
+    function copyOutput() {
+      const text = document.getElementById("output").innerText;
+      navigator.clipboard.writeText(text);
+      alert("📋 Output copied!");
+    }
+
+    function exportCSV() {
+      const table = document.querySelector("#output table");
+      if (!table) { alert("No data to export"); return; }
+      let csv = [];
+      const rows = table.querySelectorAll("tr");
+      rows.forEach(row => {
+        const cols = row.querySelectorAll("th,td");
+        let rowData = [];
+        cols.forEach(col => rowData.push(col.innerText));
+        csv.push(rowData.join(","));
+      });
+      const blob = new Blob([csv.join("\n")], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "query_result.csv";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

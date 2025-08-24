@@ -1,0 +1,51 @@
+id,name,age,department,grade
+1,Arjun,20,Computer Science,A
+2,Meera,21,Mathematics,B
+3,Ravi,22,Physics,A
+4,Divya,19,English,B
+5,Karan,20,Computer Science,A
+6,Ananya,21,Economics,C
+7,Suresh,23,Chemistry,B
+8,Pooja,20,Mathematics,A
+9,Vikram,22,Computer Science,B
+10,Sneha,21,Biology,A
+11,Rahul,20,History,B
+12,Nisha,22,Computer Science,A
+13,Amit,23,Mathematics,C
+14,Geeta,19,Economics,B
+15,Pranav,21,Computer Science,A
+16,Kavya,22,English,B
+17,Harsh,20,Physics,A
+18,Tanvi,21,Mathematics,A
+19,Manoj,23,Chemistry,B
+20,Ishita,20,Biology,C
+21,Sameer,21,Computer Science,A
+22,Ritu,22,Economics,B
+23,Nikhil,23,History,B
+24,Ayesha,19,Mathematics,A
+25,Rohan,20,Computer Science,A
+26,Priya,21,English,B
+27,Aditya,22,Computer Science,C
+28,Sanjana,20,Biology,A
+29,Ashwin,21,Physics,B
+30,Deepa,23,Economics,A
+31,Vivek,20,Mathematics,B
+32,Swati,22,Computer Science,A
+33,Karthik,21,English,C
+34,Neha,23,Biology,A
+35,Anil,19,Chemistry,B
+36,Shreya,20,Computer Science,A
+37,Raj,21,History,C
+38,Muskan,22,Mathematics,B
+39,Arvind,20,Physics,A
+40,Preeti,21,Economics,B
+41,Sachin,23,Computer Science,A
+42,Sonali,19,English,A
+43,Akhil,22,Chemistry,B
+44,Nandini,21,Computer Science,C
+45,Varun,20,Biology,A
+46,Komal,22,Mathematics,B
+47,Jay,23,Computer Science,A
+48,Monika,19,Economics,B
+49,Dev,21,Physics,A
+50,Rashmi,20,Computer Science,B
